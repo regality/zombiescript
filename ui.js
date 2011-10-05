@@ -164,11 +164,11 @@ zs.ui.verifyForm = function (form) {
 };
 
 zs.ui.tinymceOptions = {
-   script_url : zs.settings.baseUrl + '/js/tiny_mce/tiny_mce.js',
+   script_url : zs.settings.baseUrl + '/build/tinymce/tiny_mce.js',
    theme : "simple"
 };
 
 zs.ui.wysiwyg = function (textarea) {
-   zs.util.importJs('/js/tiny_mce/jquery.tinymce.js');
+   zs.util.importJs('/build/tinymce/jquery.tinymce.js');
    $(textarea).tinymce(zs.ui.tinymceOptions);
 };

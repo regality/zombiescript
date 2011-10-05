@@ -69,7 +69,6 @@ zs.util.loadCSS = function (url) {
 zs.init = {};
 
 zs.init.init = function () {
-   zs.util.require('zombiescript/jquery.class');
    zs.util.require('zombiescript/ui');
    zs.util.require('zombiescript/crypt');
    zs.util.require('zombiescript/stack');
@@ -154,10 +153,12 @@ zs.init.setupAjax = function () {
          }
          options.data += csrf;
       }
-      if (typeof options.data !== "undefined") {
-         options.data += "&format=" + options.dataType;
-      } else {
-         options.data = "format=" + options.dataType;
+      if (options.dataType != "script") {
+         if (typeof options.data !== "undefined") {
+            options.data += "&format=" + options.dataType;
+         } else {
+            options.data = "format=" + options.dataType;
+         }
       }
       if (zs.settings.debug) {
          zs.ui.message("ajax data:" + options.data);
