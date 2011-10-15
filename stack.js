@@ -75,12 +75,6 @@ zs.stack.popActive = function () {
    zs.stack.pop(zs.stack.activeName());
 };
 
-// generic pop event
-$(".pop-active").live('click', function (e) {
-   e.preventDefault();
-   zs.stack.popActive();
-});
-
 // get the size of a stack
 zs.stack.size = function (appStack) {
    return $("#" + appStack + "-stack").find(".app-content").length;
@@ -117,9 +111,18 @@ zs.stack.handleHashChange = function (hash) {
    }
 };
 
-$(window).bind('hashchange', function () {
-   zs.stack.handleHashChange(window.location.hash);
-});
+// event bindings
+zs.stack.init = function() {
+   $(window).bind('hashchange', function () {
+      zs.stack.handleHashChange(window.location.hash);
+   });
+
+   $(".pop-active").live('click', function (e) {
+      e.preventDefault();
+      zs.stack.popActive();
+   });
+
+};
 
 // refresh the top of a stack
 zs.stack.refresh = function (appStack) {

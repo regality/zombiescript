@@ -69,14 +69,15 @@ zs.util.loadCSS = function (url) {
 zs.init = {};
 
 zs.init.init = function () {
+   if (typeof JSON === "undefined") {
+      zs.util.require("zombiescript/json2");
+   }
    zs.util.require('zombiescript/ui');
    zs.util.require('zombiescript/crypt');
    zs.util.require('zombiescript/stack');
    zs.util.require('zombiescript/token');
-   if (typeof JSON === "undefined") {
-      zs.util.require("zombiescript/json2");
-   }
    zs.init.setupAjax();
+   zs.stack.init();
 };
 
 // setup ajax for the zs

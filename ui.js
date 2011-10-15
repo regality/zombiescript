@@ -91,25 +91,23 @@ zs.ui.consoleAdd = function (html, text) {
 // check for incomplete required fields
 zs.ui.verifyForm = function (form) {
    var formDone = true;
-   /*
-   var radios = form.find("radio");
-   if (radios.length > 0) {
-      var radioNames = [];
-      radios.each(function () {
-      });
-   }
-   */
    form.find("input, textarea, select").each(function () {
-      var validator, value, tmp, format, re;
-      var formValue = $(this).val();
-      var formName = $(this).attr("name");
+      var validator, value, tmp, format, re, errorDiv, offenseDiv;
       var validatorsStr = $(this).attr("validate");
-      var fail = false;
-      var errorStr = '';
       if (!validatorsStr) {
-         return;
+         return true;
       }
+      var formValue = $(this).val();
+      var formLabel = $(this).attr("name");
+      var errorStr = '';
+      var offense = null;
       var validators = validatorsStr.split(",");
+      var label = $(this).parent().parent().find("label");
+      if (label.length == 1) {
+         formLabel = label.text();
+      } else {
+         formLabel = formLabel.replace("_", " ");
+      }
       for (var i = 0; i < validators.length; ++i) {
          validator = validators[i];
          if (validator.match("=")) {
@@ -119,44 +117,51 @@ zs.ui.verifyForm = function (form) {
          }
          if (validator == "required") {
             if (!formValue) {
-               fail = true;
-               errorStr = formName + " is required.";
+               errorStr = formLabel + " is required.";
+               offense = validator;
             }
          } else if (validator == "maxlen") {
             if (formValue && formValue.length > value) {
-               fail = true;
-               errorStr = formName + " is too long (max length " + value + ".)";
+               errorStr = formLabel + " is too long (max length " + value + ".)";
+               offense = validator;
             }
          } else if (validator == "minlen") {
             if (formValue.length > 0 && formValue.length < value) {
-               fail = true;
-               errorStr = formName + " is too short (min length " + value + ".)";
+               errorStr = formLabel + " is too short (min length " + value + ".)";
+               offense = validator;
             }
          } else if (validator == "number") {
             if (formValue && isNaN(formValue)) {
-               fail = true;
-               errorStr = formName + " must be a number.";
+               errorStr = formLabel + " must be a number.";
+               offense = validator;
             }
          } else if (validator == "int") {
             if (formValue && parseInt(formValue) != formValue) {
-               fail = true;
-               errorStr = formName + " must be a whole number.";
+               errorStr = formLabel + " must be a whole number.";
+               offense = validator;
             }
          } else if (validator == "format") {
             format = value;
             re = new RegExp(format);
             if (formValue && !formValue.match(re)) {
-               fail = true;
-               errorStr = formName + " is in the wrong format.";
+               errorStr = formLabel + " is in the wrong format.";
+               offense = validator;
             }
          }
       }
-      if (fail) {
+      errorDiv = $(this).parent().parent().find(".error");
+      errorDiv.find("div").hide();
+      if (offense) {
+         offenseDiv = errorDiv.find("." + offense);
+         if (offenseDiv.length == 0) {
+            offenseDiv = $("<div/>");
+            offenseDiv.addClass(offense).hide().html(errorStr);
+            errorDiv.append(offenseDiv);
+         }
          formDone = false;
-         $(this).parent().parent().find(".error").hide().html(errorStr).fadeIn();
+         offenseDiv.hide().fadeIn();
          $(this).css({"background" : "#fdd"});
       } else {
-         $(this).parent().parent().find(".error").hide().html('');
          $(this).css({"background" : "#fff"});
       }
    });
