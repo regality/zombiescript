@@ -4,7 +4,7 @@
 
 zs.ui = {};
 
-zs.ui.alertShowTime = 2000;
+zs.ui.alertShowTime = 2500;
 
 zs.ui.errorLevels = {
    100 : "Message",
@@ -57,7 +57,7 @@ zs.ui.addAlert = function(type, title, mesg) {
          $(this).slideUp("slow");
       });
    });
-}
+};
 
 // add a message to the console
 zs.ui.logMessage = function (title, mesg) {
@@ -92,87 +92,108 @@ zs.ui.consoleAdd = function (html, text) {
 zs.ui.verifyForm = function (form) {
    var formDone = true;
    form.find("input, textarea, select").each(function () {
-      var validator, value, tmp, format, re, errorDiv, offenseDiv;
-      var validatorsStr = $(this).attr("validate");
-      if (!validatorsStr) {
-         return true;
-      }
-      var formValue = $(this).val();
-      var formLabel = $(this).attr("name");
-      var errorStr = '';
-      var offense = null;
-      var validators = validatorsStr.split(",");
-      var label = $(this).parent().parent().find("label");
-      if (label.length == 1) {
-         formLabel = label.text();
-      } else {
-         formLabel = formLabel.replace("_", " ");
-      }
-      for (var i = 0; i < validators.length; ++i) {
-         validator = validators[i];
-         if (validator.match("=")) {
-            tmp = validator.split("=");
-            validator = tmp[0];
-            value = tmp[1];
-         }
-         if (validator == "required") {
-            if (!formValue) {
-               errorStr = formLabel + " is required.";
-               offense = validator;
-            }
-         } else if (validator == "maxlen") {
-            if (formValue && formValue.length > value) {
-               errorStr = formLabel + " is too long (max length " + value + ".)";
-               offense = validator;
-            }
-         } else if (validator == "minlen") {
-            if (formValue.length > 0 && formValue.length < value) {
-               errorStr = formLabel + " is too short (min length " + value + ".)";
-               offense = validator;
-            }
-         } else if (validator == "number") {
-            if (formValue && isNaN(formValue)) {
-               errorStr = formLabel + " must be a number.";
-               offense = validator;
-            }
-         } else if (validator == "int") {
-            if (formValue && parseInt(formValue) != formValue) {
-               errorStr = formLabel + " must be a whole number.";
-               offense = validator;
-            }
-         } else if (validator == "format") {
-            format = value;
-            re = new RegExp(format);
-            if (formValue && !formValue.match(re)) {
-               errorStr = formLabel + " is in the wrong format.";
-               offense = validator;
-            }
-         }
-      }
-      errorDiv = $(this).parent().parent().find(".error");
-      errorDiv.find("div").hide();
-      if (offense) {
-         offenseDiv = errorDiv.find("." + offense);
-         if (offenseDiv.length == 0) {
-            offenseDiv = $("<div/>");
-            offenseDiv.addClass(offense).hide().html(errorStr);
-            errorDiv.append(offenseDiv);
-         }
-         formDone = false;
-         offenseDiv.hide().fadeIn();
-         $(this).css({"background" : "#fdd"});
-      } else {
-         $(this).css({"background" : "#fff"});
-      }
+      formDone = formDone & zs.ui.verifyField($(this));
    });
    return formDone;
 };
 
+// verify a field passes it's validators
+zs.ui.verifyField = function(field) {
+   var validator, value, tmp, format, re;
+   var validatorsStr = field.attr("validate");
+   if (!validatorsStr) {
+      return true;
+   }
+   var formValue = field.val();
+   var formLabel = field.attr("name");
+   var errorStr = '';
+   var offense = null;
+   var validators = validatorsStr.split(",");
+   var label = field.parent().parent().find("label");
+   if (label.length == 1) {
+      formLabel = label.text();
+   } else {
+      formLabel = formLabel.replace("_", " ");
+   }
+   for (var i = 0; i < validators.length; ++i) {
+      validator = validators[i];
+      if (validator.match("=")) {
+         tmp = validator.split("=");
+         validator = tmp[0];
+         value = tmp[1];
+      }
+      if (validator == "required") {
+         if (!formValue) {
+            errorStr = formLabel + " is required.";
+            offense = validator;
+         }
+      } else if (validator == "maxlen") {
+         if (formValue && formValue.length > value) {
+            errorStr = formLabel + " is too long (max length " + value + ".)";
+            offense = validator;
+         }
+      } else if (validator == "minlen") {
+         if (formValue.length > 0 && formValue.length < value) {
+            errorStr = formLabel + " is too short (min length " + value + ".)";
+            offense = validator;
+         }
+      } else if (validator == "number") {
+         if (formValue && isNaN(formValue)) {
+            errorStr = formLabel + " must be a number.";
+            offense = validator;
+         }
+      } else if (validator == "int") {
+         if (formValue && parseInt(formValue) != formValue) {
+            errorStr = formLabel + " must be a whole number.";
+            offense = validator;
+         }
+      } else if (validator == "format") {
+         format = value;
+         re = new RegExp(format);
+         if (formValue && !formValue.match(re)) {
+            errorStr = formLabel + " is in the wrong format.";
+            offense = validator;
+         }
+      }
+   }
+   zs.ui.hideFieldErrors(field);
+   if (offense) {
+      zs.ui.showFieldError(field, offense, errorStr);
+      field.css({"background" : "#fdd"});
+      return false;
+   } else {
+      field.css({"background" : "#fff"});
+      return true;
+   }
+};
+
+// show an error for a field and offense
+zs.ui.showFieldError = function(field, offense, errorStr) {
+   var errorDiv, offenseDiv;
+   zs.ui.hideFieldErrors(field);
+   errorDiv = field.parent().parent().find(".error");
+   offenseDiv = errorDiv.find("." + offense);
+   if (offenseDiv.length == 0) {
+      offenseDiv = $("<div/>");
+      offenseDiv.addClass(offense).hide().html(errorStr);
+      errorDiv.append(offenseDiv);
+   }
+   offenseDiv.hide().fadeIn();
+};
+
+// hide all errors for a field
+zs.ui.hideFieldErrors = function(field) {
+   var errorDiv = field.parent().parent().find(".error");
+   errorDiv.find("div").hide();
+};
+
+// default options for tinymce
 zs.ui.tinymceOptions = {
    script_url : zs.settings.baseUrl + '/build/tinymce/tiny_mce.js',
    theme : "simple"
 };
 
+// turn a textarea into a wysiwyg editor
 zs.ui.wysiwyg = function (textarea) {
    zs.util.importJs('/build/tinymce/jquery.tinymce.js');
    $(textarea).tinymce(zs.ui.tinymceOptions);
