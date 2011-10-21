@@ -26,7 +26,7 @@ zs.util.require = function (js, callback) {
    if (zs.settings.mode == 'dev') {
       url = '/js/' + module + '/' + file + '.js';
    } else if (zs.settings.mode == 'prod') {
-      url = '/build/' + zs.settings.version + '/js/' + 
+      url = '/build/js/' + zs.settings.version + '/' + 
             module + '/' + file + '.js';
    }
    zs.util.importJs(url, callback);
@@ -54,7 +54,7 @@ zs.util.loadCSS = function (name) {
    if (zs.settings.mode == 'dev') {
       url = "/css/" + name + ".css";
    } else {
-      url = "build/" + zs.settings.version + "/css/" + name + ".css";
+      url = "/build/css/" + zs.settings.version + "/" + name + ".css";
    }
    if (typeof zs.util.stylesheets[url] === "undefined") {
       var link = $("<link />");
