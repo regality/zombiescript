@@ -58,7 +58,6 @@ zs.stack.focus = function (appStack) {
       $(".item").removeClass("active");
       $(".item[href^='/" + appStack + "']").addClass("active");
       newHash = "/" + appStack + "/" + zs.stack.topAction(appStack);
-      //if (newHash !== window.location.hash) {
       if (!window.location.hash.match(newHash)) {
          window.location.hash = newHash;
       }

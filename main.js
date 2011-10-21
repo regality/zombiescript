@@ -49,7 +49,13 @@ zs.util.importJs = function (url, callback) {
    }
 };
 
-zs.util.loadCSS = function (url) {
+zs.util.loadCSS = function (name) {
+   var url;
+   if (zs.settings.mode == 'dev') {
+      url = "/css/" + name + ".css";
+   } else {
+      url = "build/" + zs.settings.version + "/css/" + name + ".css";
+   }
    if (typeof zs.util.stylesheets[url] === "undefined") {
       var link = $("<link />");
       link.attr({

@@ -91,6 +91,7 @@ zs.ui.consoleAdd = function (html, text) {
 // check for incomplete required fields
 zs.ui.verifyForm = function (form) {
    var formDone = true;
+   //zs.ui.message(form.find("input, textarea, select").length);
    form.find("input, textarea, select").each(function () {
       formDone = formDone & zs.ui.verifyField($(this));
    });
@@ -110,6 +111,7 @@ zs.ui.verifyField = function(field) {
    var offense = null;
    var validators = validatorsStr.split(",");
    var label = field.parent().parent().find("label");
+   //zs.ui.message(label);
    if (label.length == 1) {
       formLabel = label.text();
    } else {
@@ -143,7 +145,7 @@ zs.ui.verifyField = function(field) {
             offense = validator;
          }
       } else if (validator == "int") {
-         if (formValue && parseInt(formValue) != formValue) {
+         if (formValue && parseInt(formValue) != formValue || formValue.match(/\D/)) {
             errorStr = formLabel + " must be a whole number.";
             offense = validator;
          }
