@@ -51,7 +51,7 @@ zs.stack.focus = function (appStack) {
    if (zs.stack.size(appStack) == 0) {
       zs.stack.push(appStack);
    } else {
-      $(".app-stack:visible").hide().attr("active",null);
+      zs.stack.hide();
       $("#" + appStack + "-stack").show().attr("active","true");
       $("#" + appStack + "-stack").find(".app-content").hide();
       $("#" + appStack + "-stack").find(".app-content").last().show();
@@ -63,6 +63,14 @@ zs.stack.focus = function (appStack) {
       }
    }
 };
+
+zs.stack.hide = function(appStack) {
+   if (!appStack) {
+      $(".app-stack:visible").hide().attr("active",null);
+   } else {
+      $(".app-stack:app=[" + appStack + "]").hide().attr("active",null);
+   }
+}
 
 // get the name of the active stack
 zs.stack.activeName = function () {
@@ -90,7 +98,7 @@ zs.stack.handleHashChange = function (hash) {
    var app, action, re;
    if (zs.stack.ignoreHash === false) {
       re = hash.match(/([a-z_]+)\/([a-z_]+)/);
-      if (typeof re !== "undefined") {
+      if (typeof re !== "undefined" && re != null) {
          app = re[1];
          action = re[2];
          if (zs.stack.size(app) > 1 && zs.stack.topAction(app) !== action) {
