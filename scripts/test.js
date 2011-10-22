@@ -143,7 +143,7 @@ zs.test.runTests = function() {
    });
 
    test("verify form", function() {
-      var i = 1000000; while(--i);
+      var i = 10000000; while(--i);
       var form = $("#testform");
       var pass = zs.ui.verifyForm(form);
       ok(pass, "form is ready");

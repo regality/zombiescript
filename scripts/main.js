@@ -54,7 +54,7 @@ zs.util.loadCSS = function (name) {
    if (zs.settings.mode == 'dev') {
       url = "/css/" + name + ".css";
    } else {
-      url = "/build/css/" + zs.settings.version + "/" + name + ".css";
+      url = "/build/css/" + zs.settings.cssVersion + "/" + name + ".css";
    }
    if (typeof zs.util.stylesheets[url] === "undefined") {
       var link = $("<link />");
