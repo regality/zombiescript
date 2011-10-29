@@ -7,6 +7,8 @@ zs.stack = {};
 zs.stack.defaultApp = "welcome";
 zs.stack.defaultAction = "index";
 zs.stack.ignoreHash = false;
+zs.stack.pushCallbacks = {};
+zs.stack.popCallbacks = {};
 
 // load the default application
 zs.stack.loadDefault = function () {
@@ -38,7 +40,8 @@ zs.stack.loadDefault = function () {
       }
    }
    if (zs.stack.size(zs.stack.defaultApp) === 0 || 
-      zs.stack.topAction(zs.stack.defaultApp) !== zs.stack.defaultAction) {
+       zs.stack.topAction(zs.stack.defaultApp) !== zs.stack.defaultAction)
+   {
       zs.stack.push(zs.stack.defaultApp, zs.stack.defaultAction, data);
    } else {
       zs.stack.focus(zs.stack.defaultApp);
@@ -70,8 +73,8 @@ zs.stack.activeName = function () {
 };
 
 // pop the active stack
-zs.stack.popActive = function () {
-   zs.stack.pop(zs.stack.activeName());
+zs.stack.popActive = function (callback) {
+   zs.stack.pop(zs.stack.activeName(callback));
 };
 
 // get the size of a stack
@@ -124,10 +127,10 @@ zs.stack.init = function() {
 };
 
 // refresh the top of a stack
-zs.stack.refresh = function (appStack) {
+zs.stack.refresh = function (appStack, callback) {
    var topFrame, data;
    if (zs.stack.size(appStack) == 0) {
-      zs.stack.push(appStack);
+      zs.stack.push(appStack, callback);
    } else {
       topFrame = $("#" + appStack + "-stack").find(".app-content").last();
       if (topFrame.attr("json")) {
@@ -144,6 +147,9 @@ zs.stack.refresh = function (appStack) {
                   zs.ui.logMessage("App Refreshed", "The app <i>" + 
                                     appStack + "." + topFrame.attr("action") + 
                                     "</i> was successfully refreshed");
+                  if (callback) {
+                     callback();
+                  }
               }
       });
    }
@@ -155,15 +161,22 @@ zs.stack.empty = function (appStack) {
 };
 
 // pop a stack
-zs.stack.pop = function (appStack, allowEmpty) {
+zs.stack.pop = function (appStack, callback) {
    $("#" + appStack + "-stack").find(".app-content").last().remove();
    zs.stack.focus(appStack);
+   if (typeof callback === "object") {
+      callback();
+   }
+   zs.stack.runPopEvents(appStack);
 };
 
 // push onto a stack
-zs.stack.push = function (appStack, appAction, data) {
+zs.stack.push = function (appStack, appAction, data, callback) {
    var stackDiv, jsonStr, getParams, tmp;
    getParams = "";
+   if (typeof callback === "undefined") {
+      callback = function() {};
+   }
    if (typeof appAction === "undefined") {
       appAction = "index";
    }
@@ -189,7 +202,7 @@ zs.stack.push = function (appStack, appAction, data) {
    jsonStr = window.escape(JSON.stringify(data));
    $.ajax({"data" : data,
            "dataType" : "html",
-           "success" : function callback (data) {
+           "success" : function(data) {
                var div;
                zs.stack.ignoreHash = true;
                window.location.hash = "/" + appStack + "/" + appAction + getParams;
@@ -200,6 +213,40 @@ zs.stack.push = function (appStack, appAction, data) {
                zs.ui.logMessage("App Loaded", "The app " + 
                                  appStack + "." + appAction + 
                                  " was successfully loaded");
+               callback();
+               zs.stack.runPushEvents(appStack);
            }
    });
+};
+
+zs.stack.onPush = function(stack, callback) {
+   zs.stack.addEvent(zs.stack.pushCallbacks, stack, callback);
+};
+
+zs.stack.runPushEvents = function(stack) {
+   zs.stack.runEvents(zs.stack.pushCallbacks, stack);
+};
+
+zs.stack.onPop = function(stack, callback) {
+   zs.stack.addEvent(zs.stack.popCallbacks, stack, callback);
+};
+
+zs.stack.runPopEvents = function(stack) {
+   zs.stack.runEvents(zs.stack.popCallbacks, stack);
+};
+
+zs.stack.runEvents = function(eventObject, stack) {
+   if (typeof eventObject[stack] === "object") {
+      var events = eventObject[stack];
+      for (var i = 0; i < events.length; ++i) {
+         events[i]();
+      }
+   }
+};
+
+zs.stack.addEvent = function(eventObject, stack, callback) {
+   if (typeof eventObject[stack] !== "object") {
+      eventObject[stack] = [];
+   }
+   eventObject[stack].push(callback);
 };
