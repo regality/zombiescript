@@ -4,7 +4,6 @@ zs.test.run = function() {
    zs.util.require("zombiescript/qunit");
    zs.util.require("zombiescript/crypt");
    zs.util.require("zombiescript/stack");
-   zs.util.loadCSS("test");
    QUnit.done = function() {
       $.ajaxSetup({"async" : true});
       zs.stack.focus("test");

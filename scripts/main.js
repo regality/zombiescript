@@ -91,6 +91,9 @@ zs.init.bindEvents = function() {
    $("a").live('click', function (e) {
       var href, re, app, action, data, i, pairs, pair;
       href = $(this).attr("href");
+      if (!href) {
+         return;
+      }
       re = href.match(/^\/([a-z_]+)\/?([a-z_]+)?\??(.*)$/);
       if (re !== null) {
          e.preventDefault();
