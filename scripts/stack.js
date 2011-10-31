@@ -14,9 +14,13 @@ zs.stack.popCallbacks = {};
 zs.stack.loadDefault = function () {
    var re = window.location.hash.match(/([a-z_]+)\/?([a-z_]+)?\??(.*)?$/);
    if (re === null) {
-      re = window.location.pathname.match(/([a-z_]+)\/?([a-z_]+)?/);
+      var loc = window.location.pathname;
+      if (loc.substr(0, zs.settings.baseUrl.length) == zs.settings.baseUrl) {
+         loc = loc.substr(zs.settings.baseUrl.length);
+      }
+      re = loc.match(/([a-z_]+)\/?([a-z_]+)?/);
       if (typeof window.history.replaceState === "function") {
-         window.history.replaceState({}, "", "/");
+         window.history.replaceState({}, "", zs.settings.baseUrl);
       }
    }
    var data = {};
