@@ -79,7 +79,6 @@ zs.init.init = function () {
       zs.util.require("zombiescript/json2");
    }
    zs.util.require('zombiescript/ui');
-   zs.util.require('zombiescript/crypt');
    zs.util.require('zombiescript/stack');
    zs.util.require('zombiescript/token');
    zs.init.setupAjax();
