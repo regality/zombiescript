@@ -19,9 +19,9 @@ zs.stack.loadDefault = function () {
          loc = loc.substr(zs.settings.baseUrl.length);
       }
       re = loc.match(/([a-z_]+)\/?([a-z_]+)?/);
-      if (typeof window.history.replaceState === "function") {
-         window.history.replaceState({}, "", zs.settings.baseUrl);
-      }
+   }
+   if (typeof window.history.replaceState === "function") {
+      window.history.replaceState({}, "", zs.settings.baseUrl + "/");
    }
    var data = {};
    if (re !== null) {
