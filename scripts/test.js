@@ -2,7 +2,6 @@ zs.test = {};
 
 zs.test.run = function() {
    zs.util.require("zombiescript/qunit");
-   zs.util.require("zombiescript/crypt");
    zs.util.require("zombiescript/stack");
    QUnit.done = function() {
       $.ajaxSetup({"async" : true});
@@ -100,17 +99,6 @@ zs.test.runTests = function() {
 
       token = zs.token.get();
       notEqual(token, '', "token is re-requested");
-   });
-
-   module("zombiescript crypt");
-
-   test("crypt hash function", function() {
-      var s1 = zs.crypt.hash('');
-      var h1 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
-      var s2 = zs.crypt.hash('kachow');
-      var h2 = "4b3130877b5c6008a9be52a35bda5d8419ae43c5ae3b5deab16be3f42d3dd0a8";
-      equal(s1, h1, "empty hash");
-      equal(s2, h2, "nonempty hash");
    });
 
    module("zombiescript ui form", {
