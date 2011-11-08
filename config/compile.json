@@ -1,0 +1,24 @@
+{
+   "javascript" : {
+      "main" : [
+         "jquery",
+         "main",
+         "ui",
+         "stack",
+         "token",
+         "defaultvalue"
+      ],
+      "standalone" : [
+         "json2",
+         "test",
+         "qunit"
+      ]
+   },
+   "stylesheets" : {
+      "qunit" : [
+         "qunit"
+      ]
+   },
+   "images" : [
+   ]
+}
