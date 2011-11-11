@@ -231,6 +231,36 @@ zs.stack.push = function (appStack, appAction, data, callback) {
    });
 };
 
+zs.stack.getStackDiv = function(app) {
+   var stackDiv = $("#" + app + "-stack");
+   if (stackDiv.length === 0) {
+      stackDiv = $('<div app="' + app + '" class="app-stack" id="' + app + '-stack"></div>');
+      $("#content").append(stackDiv);
+   }
+   return stackDiv;
+};
+
+zs.stack.pushTemplate = function(app, action, data) {
+   var html = zs.template.render(app, action, data);
+   zs.stack.pushHtml(app, action, html);
+};
+
+// push onto a stack
+zs.stack.pushHtml = function (appStack, appAction, html) {
+   var stackDiv = zs.stack.getStackDiv(appStack);
+   var contentDiv = $("<div/>");
+   contentDiv.addClass("app-content").attr("action", appAction);
+   contentDiv.html(html);
+   stackDiv.append(contentDiv);
+   zs.stack.ignoreHash = true;
+   window.location.hash = "/" + appStack + "/" + appAction;
+   zs.stack.focus(appStack);
+   zs.ui.logMessage("App Loaded", "The app " + 
+                     appStack + "." + appAction + 
+                     " was successfully loaded");
+   zs.stack.runPushEvents(appStack);
+};
+
 zs.stack.onPush = function(stack, callback) {
    zs.stack.addEvent(zs.stack.pushCallbacks, stack, callback);
 };
