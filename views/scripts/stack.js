@@ -156,9 +156,9 @@ zs.stack.refresh = function (appStack, callback) {
               success : function (data) {
                   topFrame.html(data);
                   zs.stack.focus(appStack);
-                  zs.ui.logMessage("App Refreshed", "The app <i>" + 
+                  zs.ui.logMessage("App Refreshed", "The app " + 
                                     appStack + "." + topFrame.attr("action") + 
-                                    "</i> was successfully refreshed");
+                                    " was successfully refreshed");
                   if (callback) {
                      callback();
                   }

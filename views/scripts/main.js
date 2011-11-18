@@ -134,7 +134,7 @@ zs.init.setupAjax = function () {
       "url" : zs.settings.baseUrl + "/app.php",
       "cache" : "false",
       "error" : function (xhr, status, error) {
-         zs.ui.warn('An error occured:' + error + status);
+         zs.ui.warn('An ajax error occured:' + error);
       },
       "dataFilter" : function (rawData, type) {
          var data, mesg, i;
