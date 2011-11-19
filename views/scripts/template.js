@@ -12,6 +12,7 @@ zs.template.load = function(app, view) {
 };
 
 zs.template.render = function(app, view, data) {
+   data = data || {};
    zs.template.load(app, view);
    var template = app + "/" + view;
    if (!zs.template.templates[template]) {

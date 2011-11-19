@@ -5,6 +5,7 @@
          "main",
          "ui",
          "stack",
+         "template",
          "token",
          "defaultvalue"
       ],
