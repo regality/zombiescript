@@ -200,7 +200,8 @@ zs.init.setupAjax = function () {
       var csrf;
       if (typeof options.data !== "undefined" &&
           options.data.search("app=csrf") === -1 &&
-          options.data.search("csrf=") === -1) {
+          options.data.search("csrf=") === -1)
+      {
          csrf = "csrf=" + zs.token.get();
          if (options.data.length > 0) {
             csrf = "&" + csrf;
