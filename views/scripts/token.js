@@ -21,11 +21,15 @@ zs.token.get = function () {
 };
 
 // request a new token from the server
-zs.token.request = function () {
+zs.token.request = function (callback) {
+   if (typeof callback !== "function") {
+      callback = function() {};
+   }
    $.ajax({"data" : {"app" : "csrf"},
            "async" : false,
            "success" : function (data) {
                zs.token.set(data.token);
+               callback();
            }
    });
 };

@@ -141,6 +141,7 @@ zs.stack.init = function() {
 // refresh the top of a stack
 zs.stack.refresh = function (appStack, callback) {
    var topFrame, data;
+   var loadingHtml = zs.template.render("home", "loading", {});
    if (zs.stack.size(appStack) == 0) {
       zs.stack.push(appStack, callback);
    } else {
@@ -151,11 +152,13 @@ zs.stack.refresh = function (appStack, callback) {
          data = {"app" : appStack,
                  "action" : zs.stack.topAction(appStack)};
       }
+      topFrame.html(loadingHtml);
+      zs.stack.focus(appStack);
       $.ajax({"data" : data,
               "dataType" : "html",
               success : function (data) {
                   topFrame.html(data);
-                  zs.stack.focus(appStack);
+                  //zs.stack.focus(appStack);
                   zs.ui.logMessage("App Refreshed", "The app " + 
                                     appStack + "." + topFrame.attr("action") + 
                                     " was successfully refreshed");
@@ -185,6 +188,7 @@ zs.stack.pop = function (appStack, callback) {
 // push onto a stack
 zs.stack.push = function (appStack, appAction, data, callback) {
    var stackDiv, jsonStr, getParams, tmp;
+   var loadingHtml = zs.template.render("home", "loading", {});
    getParams = "";
    if (typeof callback === "undefined") {
       callback = function() {};
@@ -211,17 +215,23 @@ zs.stack.push = function (appStack, appAction, data, callback) {
       stackDiv = $('<div app="' + appStack + '" class="app-stack" id="' + appStack + '-stack"></div>');
       $("#content").append(stackDiv);
    }
+
+   var div = $("<div/>");
+   div.addClass("app-content");
    jsonStr = window.escape(JSON.stringify(data));
+   div.attr("json", jsonStr);
+   div.attr("action", appAction);
+   div.html(loadingHtml);
+   stackDiv.append(div);
+   zs.stack.ignoreHash = true;
+   window.location.hash = "/" + appStack + "/" + appAction + getParams;
+   zs.stack.focus(appStack);
+
    $.ajax({"data" : data,
            "dataType" : "html",
            "success" : function(data) {
-               var div;
-               zs.stack.ignoreHash = true;
-               window.location.hash = "/" + appStack + "/" + appAction + getParams;
-               div = '<div class="app-content" json="' + jsonStr + '" action="' + appAction + '">' + data + '</div>';
-               stackDiv.append(div);
-               stackDiv.show();
-               zs.stack.focus(appStack);
+               div.html(data);
+               //zs.stack.focus(appStack);
                zs.ui.logMessage("App Loaded", "The app " + 
                                  appStack + "." + appAction + 
                                  " was successfully loaded");

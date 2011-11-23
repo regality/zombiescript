@@ -162,7 +162,13 @@ zs.init.setupAjax = function () {
                }
                if (typeof data.errors === "object") {
                   for (i = 0; i < data.errors.length; i += 1) {
-                     zs.ui.error(data.errors[i]);
+                     if (data.errors[i] == "bad csrf") {
+                        zs.token.request(function() {
+                           zs.ui.error("CSRF ERROR: Please try again.");
+                        });
+                     } else {
+                        zs.ui.error(data.errors[i]);
+                     }
                   }
                }
                if (typeof data.messages === "object") {
